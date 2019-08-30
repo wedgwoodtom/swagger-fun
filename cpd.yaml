@@ -1,0 +1,1335 @@
+openapi: 3.0.0
+info:
+  contact:
+    name: Comcast Technology Solutions
+    url: http://comcasttechnologysolutions.com
+  description: MPX admin and/or end user identity tokens are required on every method.
+    Any HTTP method not given here must be declined with a '405' status.
+  license:
+    name: Unlicensed
+  title: 'Consumer Personas & Devices: Consumer Account and Persona Management API'
+  version: "0.1"
+servers:
+- url: /
+security:
+- mpxAdminAuth: []
+- mpxEndUserAuth: []
+tags:
+- name: Consumer Account Settings
+- name: Consumer Persona Settings
+paths:
+  /cpd/{customerId}/accounts:
+    options:
+      description: Return an [OpenAPI document](https://github.com/OAI/OpenAPI-Specification)
+        describing this API.
+      parameters:
+      - description: MPX Admin IDM Basic Authorization
+        in: header
+        name: Authorization
+        required: true
+        schema:
+          type: string
+      - description: A value containing the keyword "gzip" indicates that gzip compression
+          is allowed. If the header _contains_ either "gzip;q=0"or "identity", the
+          response shall not be compressed. The values "compress" (indicating LZW),
+          "deflate" (zlib) or "br" (Brotli) are not supported. If this header is *not*
+          provided or if the value provided is "*" it shall be assumed that a gzip-encoded
+          response is acceptable.
+        in: header
+        name: Accept-Encoding
+        schema:
+          example: gzip
+          type: string
+      - description: 'A correlation ID for tracing and debugging purposes, used to
+          identify the request in service log files. If not specified, the service
+          creates a unique correlation ID for the request. The `X-thePlatform-cid`
+          header, if present, is always preferred over the cid parameter. '
+        in: header
+        name: X-thePlatform-cid
+        required: false
+        schema:
+          type: string
+      - description: A correlation ID for tracing and debugging purposes, used to
+          identify the request in service log files. If not specified, the service
+          creates a unique correlation ID for the request. The `X-thePlatform-cid`
+          header, if present, is always preferred over the cid parameter.
+        in: query
+        name: cid
+        required: false
+        schema:
+          type: string
+      - description: The ID of the Customer account, for now MPX account Id
+        in: path
+        name: customerId
+        required: true
+        schema:
+          example: "23845156"
+          type: string
+      responses:
+        200:
+          content:
+            application/json;v=1:
+              schema:
+                type: string
+            application/x-yaml:
+              schema:
+                type: string
+          description: The OpenAPI document requested.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+        401:
+          content:
+            application/json;v=1:
+              example:
+                code: 401
+                name: AuthenticationException
+                details: The user does not have valid authentication credentials for
+                  the target resource.
+                correlationId: a355beec-3a63-4b08-b51b-7ba788537176
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Invalid or missing security token.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+      summary: Return an OpenAPI document describing this API.
+      tags:
+      - Consumer Account Settings
+    post:
+      description: This method shall only be called by an admin user when a new Consumer
+        Account is being created.
+      parameters:
+      - description: MPX Admin IDM Basic Authorization
+        in: header
+        name: Authorization
+        required: true
+        schema:
+          type: string
+      - description: A value containing the keyword "gzip" indicates that gzip compression
+          is allowed. If the header _contains_ either "gzip;q=0"or "identity", the
+          response shall not be compressed. The values "compress" (indicating LZW),
+          "deflate" (zlib) or "br" (Brotli) are not supported. If this header is *not*
+          provided or if the value provided is "*" it shall be assumed that a gzip-encoded
+          response is acceptable.
+        in: header
+        name: Accept-Encoding
+        schema:
+          example: gzip
+          type: string
+      - description: 'A correlation ID for tracing and debugging purposes, used to
+          identify the request in service log files. If not specified, the service
+          creates a unique correlation ID for the request. The `X-thePlatform-cid`
+          header, if present, is always preferred over the cid parameter. '
+        in: header
+        name: X-thePlatform-cid
+        required: false
+        schema:
+          type: string
+      - description: A correlation ID for tracing and debugging purposes, used to
+          identify the request in service log files. If not specified, the service
+          creates a unique correlation ID for the request. The `X-thePlatform-cid`
+          header, if present, is always preferred over the cid parameter.
+        in: query
+        name: cid
+        required: false
+        schema:
+          type: string
+      - description: The ID of the Customer account, for now MPX account Id
+        in: path
+        name: customerId
+        required: true
+        schema:
+          example: "23845156"
+          type: string
+      requestBody:
+        content:
+          application/json;v=1:
+            schema:
+              $ref: '#/components/schemas/accounts'
+        required: true
+      responses:
+        201:
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/location'
+        400:
+          content:
+            application/json;v=1:
+              example:
+                code: 400
+                name: Bad syntax
+                details: The request payload is malformed.
+                correlationId: 1f53db23-c788-4185-8899-b3e4c2a2cdfd
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Bad syntax -- the request payload is malformed.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+        401:
+          content:
+            application/json;v=1:
+              example:
+                code: 401
+                name: AuthenticationException
+                details: The user does not have valid authentication credentials for
+                  the target resource.
+                correlationId: a355beec-3a63-4b08-b51b-7ba788537176
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Invalid or missing security token.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+        415:
+          content:
+            application/json;v=1:
+              example:
+                code: 415
+                name: ObjectSchemaNotFound
+                details: The object schema was not found.
+                correlationId: 1b7ba914-5dd7-465b-b854-eebd8fdad86d
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Unsupported Media Type. For unknown schema requests or response
+            format.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+        500:
+          content:
+            application/json;v=1:
+              example:
+                code: 500
+                name: ServerError
+                details: The server is full of foo.
+                correlationId: f1ce4e94-1490-430c-8069-7b5695dca8ba
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Server error.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+      summary: Create an account
+      tags:
+      - Consumer Account Settings
+  /cpd/{customerId}/accounts/{accountId}:
+    delete:
+      parameters:
+      - description: A value containing the keyword "gzip" indicates that gzip compression
+          is allowed. If the header _contains_ either "gzip;q=0"or "identity", the
+          response shall not be compressed. The values "compress" (indicating LZW),
+          "deflate" (zlib) or "br" (Brotli) are not supported. If this header is *not*
+          provided or if the value provided is "*" it shall be assumed that a gzip-encoded
+          response is acceptable.
+        in: header
+        name: Accept-Encoding
+        schema:
+          example: gzip
+          type: string
+      - description: 'A correlation ID for tracing and debugging purposes, used to
+          identify the request in service log files. If not specified, the service
+          creates a unique correlation ID for the request. The `X-thePlatform-cid`
+          header, if present, is always preferred over the cid parameter. '
+        in: header
+        name: X-thePlatform-cid
+        required: false
+        schema:
+          type: string
+      - description: A correlation ID for tracing and debugging purposes, used to
+          identify the request in service log files. If not specified, the service
+          creates a unique correlation ID for the request. The `X-thePlatform-cid`
+          header, if present, is always preferred over the cid parameter.
+        in: query
+        name: cid
+        required: false
+        schema:
+          type: string
+      - description: The ID of the Customer account, for now MPX account Id
+        in: path
+        name: customerId
+        required: true
+        schema:
+          example: "23845156"
+          type: string
+      - description: The ID of the account.
+        example: 39669793
+        in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+        401:
+          content:
+            application/json;v=1:
+              example:
+                code: 401
+                name: AuthenticationException
+                details: The user does not have valid authentication credentials for
+                  the target resource.
+                correlationId: a355beec-3a63-4b08-b51b-7ba788537176
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Invalid or missing security token.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+        404:
+          content:
+            application/json;v=1:
+              example:
+                code: 404
+                name: ObjectNotFound
+                details: An object with the requested id was not found.
+                correlationId: 7ec3c35c-3994-4428-9e01-589982c06c92
+              schema:
+                $ref: '#/components/schemas/error'
+          description: An object with the requested ID was not found.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+        500:
+          content:
+            application/json;v=1:
+              example:
+                code: 500
+                name: ServerError
+                details: The server is full of foo.
+                correlationId: f1ce4e94-1490-430c-8069-7b5695dca8ba
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Server error.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+      summary: Delete an account
+      tags:
+      - Consumer Account Settings
+    get:
+      parameters:
+      - description: A value containing the keyword "gzip" indicates that gzip compression
+          is allowed. If the header _contains_ either "gzip;q=0"or "identity", the
+          response shall not be compressed. The values "compress" (indicating LZW),
+          "deflate" (zlib) or "br" (Brotli) are not supported. If this header is *not*
+          provided or if the value provided is "*" it shall be assumed that a gzip-encoded
+          response is acceptable.
+        in: header
+        name: Accept-Encoding
+        schema:
+          example: gzip
+          type: string
+      - description: 'A correlation ID for tracing and debugging purposes, used to
+          identify the request in service log files. If not specified, the service
+          creates a unique correlation ID for the request. The `X-thePlatform-cid`
+          header, if present, is always preferred over the cid parameter. '
+        in: header
+        name: X-thePlatform-cid
+        required: false
+        schema:
+          type: string
+      - description: A correlation ID for tracing and debugging purposes, used to
+          identify the request in service log files. If not specified, the service
+          creates a unique correlation ID for the request. The `X-thePlatform-cid`
+          header, if present, is always preferred over the cid parameter.
+        in: query
+        name: cid
+        required: false
+        schema:
+          type: string
+      - description: The ID of the Customer account, for now MPX account Id
+        in: path
+        name: customerId
+        required: true
+        schema:
+          example: "23845156"
+          type: string
+      - description: The ID of the account.
+        example: 39669793
+        in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          content:
+            application/json;v=1:
+              schema:
+                $ref: '#/components/schemas/accounts'
+          description: OK
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+        401:
+          content:
+            application/json;v=1:
+              example:
+                code: 401
+                name: AuthenticationException
+                details: The user does not have valid authentication credentials for
+                  the target resource.
+                correlationId: a355beec-3a63-4b08-b51b-7ba788537176
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Invalid or missing security token.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+        404:
+          content:
+            application/json;v=1:
+              example:
+                code: 404
+                name: ObjectNotFound
+                details: An object with the requested id was not found.
+                correlationId: 7ec3c35c-3994-4428-9e01-589982c06c92
+              schema:
+                $ref: '#/components/schemas/error'
+          description: An object with the requested ID was not found.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+        500:
+          content:
+            application/json;v=1:
+              example:
+                code: 500
+                name: ServerError
+                details: The server is full of foo.
+                correlationId: f1ce4e94-1490-430c-8069-7b5695dca8ba
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Server error.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+      summary: Fetch an account
+      tags:
+      - Consumer Account Settings
+    put:
+      description: This is not a sparse update, the payload **fully** replaces the
+        existing account. Any fields not included in this payload are removed from
+        the existing account.
+      parameters:
+      - description: A value containing the keyword "gzip" indicates that gzip compression
+          is allowed. If the header _contains_ either "gzip;q=0"or "identity", the
+          response shall not be compressed. The values "compress" (indicating LZW),
+          "deflate" (zlib) or "br" (Brotli) are not supported. If this header is *not*
+          provided or if the value provided is "*" it shall be assumed that a gzip-encoded
+          response is acceptable.
+        in: header
+        name: Accept-Encoding
+        schema:
+          example: gzip
+          type: string
+      - description: 'A correlation ID for tracing and debugging purposes, used to
+          identify the request in service log files. If not specified, the service
+          creates a unique correlation ID for the request. The `X-thePlatform-cid`
+          header, if present, is always preferred over the cid parameter. '
+        in: header
+        name: X-thePlatform-cid
+        required: false
+        schema:
+          type: string
+      - description: A correlation ID for tracing and debugging purposes, used to
+          identify the request in service log files. If not specified, the service
+          creates a unique correlation ID for the request. The `X-thePlatform-cid`
+          header, if present, is always preferred over the cid parameter.
+        in: query
+        name: cid
+        required: false
+        schema:
+          type: string
+      - description: The ID of the Customer account, for now MPX account Id
+        in: path
+        name: customerId
+        required: true
+        schema:
+          example: "23845156"
+          type: string
+      - description: The ID of the account.
+        example: 39669793
+        in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json;v=1:
+            schema:
+              $ref: '#/components/schemas/accounts'
+        required: true
+      responses:
+        200:
+          description: OK
+        400:
+          content:
+            application/json;v=1:
+              example:
+                code: 400
+                name: Bad syntax
+                details: The request payload is malformed.
+                correlationId: 1f53db23-c788-4185-8899-b3e4c2a2cdfd
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Bad syntax -- the request payload is malformed.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+        401:
+          content:
+            application/json;v=1:
+              example:
+                code: 401
+                name: AuthenticationException
+                details: The user does not have valid authentication credentials for
+                  the target resource.
+                correlationId: a355beec-3a63-4b08-b51b-7ba788537176
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Invalid or missing security token.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+        404:
+          content:
+            application/json;v=1:
+              example:
+                code: 404
+                name: ObjectNotFound
+                details: An object with the requested id was not found.
+                correlationId: 7ec3c35c-3994-4428-9e01-589982c06c92
+              schema:
+                $ref: '#/components/schemas/error'
+          description: An object with the requested ID was not found.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+        415:
+          content:
+            application/json;v=1:
+              example:
+                code: 415
+                name: ObjectSchemaNotFound
+                details: The object schema was not found.
+                correlationId: 1b7ba914-5dd7-465b-b854-eebd8fdad86d
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Unsupported Media Type. For unknown schema requests or response
+            format.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+        500:
+          content:
+            application/json;v=1:
+              example:
+                code: 500
+                name: ServerError
+                details: The server is full of foo.
+                correlationId: f1ce4e94-1490-430c-8069-7b5695dca8ba
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Server error.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+      summary: Update an account
+      tags:
+      - Consumer Account Settings
+  /cpd/{customerId}/accounts/{accountId}/personas:
+    post:
+      description: Add a persona to the account.
+      parameters:
+      - description: MPX Admin IDM Basic Authorization
+        in: header
+        name: Authorization
+        required: true
+        schema:
+          type: string
+      - description: A value containing the keyword "gzip" indicates that gzip compression
+          is allowed. If the header _contains_ either "gzip;q=0"or "identity", the
+          response shall not be compressed. The values "compress" (indicating LZW),
+          "deflate" (zlib) or "br" (Brotli) are not supported. If this header is *not*
+          provided or if the value provided is "*" it shall be assumed that a gzip-encoded
+          response is acceptable.
+        in: header
+        name: Accept-Encoding
+        schema:
+          example: gzip
+          type: string
+      - description: 'A correlation ID for tracing and debugging purposes, used to
+          identify the request in service log files. If not specified, the service
+          creates a unique correlation ID for the request. The `X-thePlatform-cid`
+          header, if present, is always preferred over the cid parameter. '
+        in: header
+        name: X-thePlatform-cid
+        required: false
+        schema:
+          type: string
+      - description: A correlation ID for tracing and debugging purposes, used to
+          identify the request in service log files. If not specified, the service
+          creates a unique correlation ID for the request. The `X-thePlatform-cid`
+          header, if present, is always preferred over the cid parameter.
+        in: query
+        name: cid
+        required: false
+        schema:
+          type: string
+      - description: The ID of the Customer account, for now MPX account Id
+        in: path
+        name: customerId
+        required: true
+        schema:
+          example: "23845156"
+          type: string
+      - description: The ID of the account.
+        example: 39669793
+        in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json;v=1:
+            example:
+              isAdmin: true
+              name: diehard88
+              email: john@mcclane.com
+              avatar: https://images.customer.com/avatars/cool-dude.png
+              preferredLanguage: en-us
+              type: Adult
+              maxParentalRatings:
+              - urn:mpaa:nr
+              adminSettings:
+                lastSearch: la cops
+              personaSettings:
+                catchPhrase: Yipee ki yay!
+            schema:
+              $ref: '#/components/schemas/personas'
+        required: true
+      responses:
+        201:
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/location'
+        400:
+          content:
+            application/json;v=1:
+              example:
+                code: 400
+                name: Bad syntax
+                details: The request payload is malformed.
+                correlationId: 1f53db23-c788-4185-8899-b3e4c2a2cdfd
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Bad syntax -- the request payload is malformed.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+        401:
+          content:
+            application/json;v=1:
+              example:
+                code: 401
+                name: AuthenticationException
+                details: The user does not have valid authentication credentials for
+                  the target resource.
+                correlationId: a355beec-3a63-4b08-b51b-7ba788537176
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Invalid or missing security token.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+        415:
+          content:
+            application/json;v=1:
+              example:
+                code: 415
+                name: ObjectSchemaNotFound
+                details: The object schema was not found.
+                correlationId: 1b7ba914-5dd7-465b-b854-eebd8fdad86d
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Unsupported Media Type. For unknown schema requests or response
+            format.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+        500:
+          content:
+            application/json;v=1:
+              example:
+                code: 500
+                name: ServerError
+                details: The server is full of foo.
+                correlationId: f1ce4e94-1490-430c-8069-7b5695dca8ba
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Server error.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+      summary: Create a persona
+      tags:
+      - Consumer Persona Settings
+  /cpd/{customerId}/accounts/{accountId}/personas/{personaId}:
+    delete:
+      parameters:
+      - description: A value containing the keyword "gzip" indicates that gzip compression
+          is allowed. If the header _contains_ either "gzip;q=0"or "identity", the
+          response shall not be compressed. The values "compress" (indicating LZW),
+          "deflate" (zlib) or "br" (Brotli) are not supported. If this header is *not*
+          provided or if the value provided is "*" it shall be assumed that a gzip-encoded
+          response is acceptable.
+        in: header
+        name: Accept-Encoding
+        schema:
+          example: gzip
+          type: string
+      - description: 'A correlation ID for tracing and debugging purposes, used to
+          identify the request in service log files. If not specified, the service
+          creates a unique correlation ID for the request. The `X-thePlatform-cid`
+          header, if present, is always preferred over the cid parameter. '
+        in: header
+        name: X-thePlatform-cid
+        required: false
+        schema:
+          type: string
+      - description: A correlation ID for tracing and debugging purposes, used to
+          identify the request in service log files. If not specified, the service
+          creates a unique correlation ID for the request. The `X-thePlatform-cid`
+          header, if present, is always preferred over the cid parameter.
+        in: query
+        name: cid
+        required: false
+        schema:
+          type: string
+      - description: The ID of the Customer account, for now MPX account Id
+        in: path
+        name: customerId
+        required: true
+        schema:
+          example: "23845156"
+          type: string
+      - description: The ID of the account.
+        example: 39669793
+        in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+      - description: The ID of a Persona.
+        example: 2
+        in: path
+        name: personaId
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+        401:
+          content:
+            application/json;v=1:
+              example:
+                code: 401
+                name: AuthenticationException
+                details: The user does not have valid authentication credentials for
+                  the target resource.
+                correlationId: a355beec-3a63-4b08-b51b-7ba788537176
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Invalid or missing security token.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+        404:
+          content:
+            application/json;v=1:
+              example:
+                code: 404
+                name: ObjectNotFound
+                details: An object with the requested id was not found.
+                correlationId: 7ec3c35c-3994-4428-9e01-589982c06c92
+              schema:
+                $ref: '#/components/schemas/error'
+          description: An object with the requested ID was not found.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+        500:
+          content:
+            application/json;v=1:
+              example:
+                code: 500
+                name: ServerError
+                details: The server is full of foo.
+                correlationId: f1ce4e94-1490-430c-8069-7b5695dca8ba
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Server error.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+      summary: Delete a persona
+      tags:
+      - Consumer Persona Settings
+    get:
+      parameters:
+      - description: A value containing the keyword "gzip" indicates that gzip compression
+          is allowed. If the header _contains_ either "gzip;q=0"or "identity", the
+          response shall not be compressed. The values "compress" (indicating LZW),
+          "deflate" (zlib) or "br" (Brotli) are not supported. If this header is *not*
+          provided or if the value provided is "*" it shall be assumed that a gzip-encoded
+          response is acceptable.
+        in: header
+        name: Accept-Encoding
+        schema:
+          example: gzip
+          type: string
+      - description: 'A correlation ID for tracing and debugging purposes, used to
+          identify the request in service log files. If not specified, the service
+          creates a unique correlation ID for the request. The `X-thePlatform-cid`
+          header, if present, is always preferred over the cid parameter. '
+        in: header
+        name: X-thePlatform-cid
+        required: false
+        schema:
+          type: string
+      - description: A correlation ID for tracing and debugging purposes, used to
+          identify the request in service log files. If not specified, the service
+          creates a unique correlation ID for the request. The `X-thePlatform-cid`
+          header, if present, is always preferred over the cid parameter.
+        in: query
+        name: cid
+        required: false
+        schema:
+          type: string
+      - description: The ID of the Customer account, for now MPX account Id
+        in: path
+        name: customerId
+        required: true
+        schema:
+          example: "23845156"
+          type: string
+      - description: The ID of the account.
+        example: 39669793
+        in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+      - description: The ID of a Persona.
+        example: 2
+        in: path
+        name: personaId
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          content:
+            application/json;v=1:
+              schema:
+                $ref: '#/components/schemas/personas'
+          description: OK
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+        401:
+          content:
+            application/json;v=1:
+              example:
+                code: 401
+                name: AuthenticationException
+                details: The user does not have valid authentication credentials for
+                  the target resource.
+                correlationId: a355beec-3a63-4b08-b51b-7ba788537176
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Invalid or missing security token.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+        404:
+          content:
+            application/json;v=1:
+              example:
+                code: 404
+                name: ObjectNotFound
+                details: An object with the requested id was not found.
+                correlationId: 7ec3c35c-3994-4428-9e01-589982c06c92
+              schema:
+                $ref: '#/components/schemas/error'
+          description: An object with the requested ID was not found.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+        500:
+          content:
+            application/json;v=1:
+              example:
+                code: 500
+                name: ServerError
+                details: The server is full of foo.
+                correlationId: f1ce4e94-1490-430c-8069-7b5695dca8ba
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Server error.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+      summary: Fetch a persona
+      tags:
+      - Consumer Persona Settings
+    put:
+      description: This is not a sparse update, the payload **fully** replaces the
+        existing persona. Any fields not included in this payload are removed from
+        the existing persona.
+      parameters:
+      - description: A value containing the keyword "gzip" indicates that gzip compression
+          is allowed. If the header _contains_ either "gzip;q=0"or "identity", the
+          response shall not be compressed. The values "compress" (indicating LZW),
+          "deflate" (zlib) or "br" (Brotli) are not supported. If this header is *not*
+          provided or if the value provided is "*" it shall be assumed that a gzip-encoded
+          response is acceptable.
+        in: header
+        name: Accept-Encoding
+        schema:
+          example: gzip
+          type: string
+      - description: 'A correlation ID for tracing and debugging purposes, used to
+          identify the request in service log files. If not specified, the service
+          creates a unique correlation ID for the request. The `X-thePlatform-cid`
+          header, if present, is always preferred over the cid parameter. '
+        in: header
+        name: X-thePlatform-cid
+        required: false
+        schema:
+          type: string
+      - description: A correlation ID for tracing and debugging purposes, used to
+          identify the request in service log files. If not specified, the service
+          creates a unique correlation ID for the request. The `X-thePlatform-cid`
+          header, if present, is always preferred over the cid parameter.
+        in: query
+        name: cid
+        required: false
+        schema:
+          type: string
+      - description: The ID of the Customer account, for now MPX account Id
+        in: path
+        name: customerId
+        required: true
+        schema:
+          example: "23845156"
+          type: string
+      - description: The ID of the account.
+        example: 39669793
+        in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+      - description: The ID of a Persona.
+        example: 2
+        in: path
+        name: personaId
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json;v=1:
+            schema:
+              $ref: '#/components/schemas/personas'
+        required: true
+      responses:
+        200:
+          description: OK
+        400:
+          content:
+            application/json;v=1:
+              example:
+                code: 400
+                name: Bad syntax
+                details: The request payload is malformed.
+                correlationId: 1f53db23-c788-4185-8899-b3e4c2a2cdfd
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Bad syntax -- the request payload is malformed.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+        401:
+          content:
+            application/json;v=1:
+              example:
+                code: 401
+                name: AuthenticationException
+                details: The user does not have valid authentication credentials for
+                  the target resource.
+                correlationId: a355beec-3a63-4b08-b51b-7ba788537176
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Invalid or missing security token.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+        404:
+          content:
+            application/json;v=1:
+              example:
+                code: 404
+                name: ObjectNotFound
+                details: An object with the requested id was not found.
+                correlationId: 7ec3c35c-3994-4428-9e01-589982c06c92
+              schema:
+                $ref: '#/components/schemas/error'
+          description: An object with the requested ID was not found.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+        415:
+          content:
+            application/json;v=1:
+              example:
+                code: 415
+                name: ObjectSchemaNotFound
+                details: The object schema was not found.
+                correlationId: 1b7ba914-5dd7-465b-b854-eebd8fdad86d
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Unsupported Media Type. For unknown schema requests or response
+            format.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+        500:
+          content:
+            application/json;v=1:
+              example:
+                code: 500
+                name: ServerError
+                details: The server is full of foo.
+                correlationId: f1ce4e94-1490-430c-8069-7b5695dca8ba
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Server error.
+          headers:
+            Content-Encoding:
+              $ref: '#/components/headers/contentEncoding'
+      summary: Update a persona
+      tags:
+      - Consumer Persona Settings
+components:
+  headers:
+    location:
+      description: The canonical URI of the object.
+      example: https://d2c.theplatform.com/object/my-object-1
+      schema:
+        format: uri
+        type: string
+    contentEncoding:
+      description: The encoding of the response payload. If gzipped, the value with
+        be "gzip", otherwise the value will be "identity", indicating the response
+        is uncompressed.
+      example: gzip
+      schema:
+        pattern: gzip|identity
+        type: string
+  schemas:
+    accounts:
+      allOf:
+      - $ref: '#/components/schemas/baseObject'
+      example:
+        initialSettingsId: https://manage.personas.tp.com/cpd/1231212/settings/2
+        maxPersonas: 1
+        managedSettings:
+          subscription: everything
+        userProfileId: https://data.userprofile.community.theplatform.com/userprofile/data/UserProfile/553803464
+        userId: https://euid.theplatform.com/idm/data/User/eu-dir/467068033
+        personas:
+        - id: https://personas.tp.com/cpd/1214532/accounts/344/personas/1
+          isAdmin: true
+          name: diehard88
+          email: john@mcclane.com
+          avatar: https://images.customer.com/avatars/cool-dude.png
+          preferredLanguage: en-us
+          type: Adult
+          maxParentalRatings:
+          - urn:mpaa:nr
+          - urn:www.ccnr.ca:e
+          adminSettings:
+            lastSearch: la cops
+          personaSettings:
+            catchPhrase: Yipee ki yay!
+        - id: https://personas.tp.com/cpd/1214532/accounts/344/personas/1
+          isAdmin: true
+          name: diehard88
+          email: john@mcclane.com
+          avatar: https://images.customer.com/avatars/cool-dude.png
+          preferredLanguage: en-us
+          type: Adult
+          maxParentalRatings:
+          - urn:mpaa:nr
+          - urn:www.ccnr.ca:e
+          adminSettings:
+            lastSearch: la cops
+          personaSettings:
+            catchPhrase: Yipee ki yay!
+        accountSettings:
+          spending limit: "0"
+          favorites: action/adventure
+      properties:
+        initialSettingsId:
+          description: A reference to the customer's account-settings used to configure
+            this account.
+          example: https://manage.personas.tp.com/cpd/1231212/settings/2
+          format: URI
+          type: string
+        maxPersonas:
+          default: 5
+          description: The maximum number of Personas for this Consumer Account. Read-only
+            on consumer instance.
+          minimum: 1
+          type: integer
+        managedSettings:
+          description: A map of customer-managed settings for the account. Mutable
+            on back-office instance. Immutable on the consumer instance.
+          example:
+            subscription: everything
+          maxItems: 15
+          minItems: 0
+          properties:
+            key:
+              description: a setting name
+              type: string
+            value:
+              description: a setting value
+              type: string
+          required:
+          - key
+          - value
+          type: object
+        accountSettings:
+          description: A map of settings for the account. Mutable on back-office instance.
+            Mutable by consumer admin on consumer instance.
+          example:
+            spending limit: "0"
+            favorites: action/adventure
+          maxItems: 15
+          minItems: 0
+          properties:
+            key:
+              description: a setting name
+              type: string
+            value:
+              description: a setting value
+              type: string
+          required:
+          - key
+          - value
+          type: object
+        userId:
+          description: The UserId referenced in the UserProfile
+          example: https://euid.theplatform.com/idm/data/User/eu-dir/467068033
+          format: URI
+          type: string
+        userProfileId:
+          description: The UserProfileId whose headOfHousehold = true for the ownerId
+          example: https://data.userprofile.community.theplatform.com/userprofile/data/UserProfile/553803464
+          format: URI
+          type: string
+        personas:
+          items:
+            $ref: '#/components/schemas/personas'
+          type: array
+      required:
+      - initialSettingsId
+      - maxPersonas
+      - userId
+      - userProfileId
+      type: object
+    error:
+      description: A standardized error response.
+      properties:
+        error:
+          $ref: '#/components/schemas/error_error'
+      type: object
+    personas:
+      allOf:
+      - $ref: '#/components/schemas/baseObject'
+      example:
+        id: https://personas.tp.com/cpd/1214532/accounts/344/personas/1
+        isAdmin: true
+        name: diehard88
+        email: john@mcclane.com
+        avatar: https://images.customer.com/avatars/cool-dude.png
+        preferredLanguage: en-us
+        type: Adult
+        maxParentalRatings:
+        - urn:mpaa:nr
+        - urn:www.ccnr.ca:e
+        adminSettings:
+          lastSearch: la cops
+        personaSettings:
+          catchPhrase: Yipee ki yay!
+      properties:
+        userId:
+          description: The UserId referenced in the UserProfile
+          example: https://euid.theplatform.com/idm/data/User/eu-dir/467068033
+          format: URI
+          type: string
+        userProfileId:
+          description: The UserProfileId whose headOfHousehold = true for the ownerId
+          example: https://data.userprofile.community.theplatform.com/userprofile/data/UserProfile/553803464
+          format: URI
+          type: string
+        isAdmin:
+          description: Whether the persona is an account administrator.
+          type: boolean
+        type:
+          description: The title of a persona-types resource if used.  Required???
+          example: Kid
+          type: string
+        maxParentalRatings:
+          description: A list of content ratings applicable to the persona.
+          example:
+          - urn:mpaa:nr
+          - urn:www.ccnr.ca:e
+          format: string
+          items:
+            type: string
+          type: array
+        name:
+          description: The name of the persona
+          example: diehard88
+          type: string
+        email:
+          description: The email address
+          example: john@mcclane.com
+          format: email
+          type: string
+        avatar:
+          description: A URI to an avatar image
+          example: https://images.customer.com/avatars/cool-dude.png
+          format: URI
+          type: string
+        preferredLanguage:
+          description: A language code
+          example: en-us
+          type: string
+        adminSettings:
+          description: A map of admin persona attributes
+          example:
+            lastSearch: la cops
+          maxItems: 15
+          minItems: 0
+          properties:
+            key:
+              description: a setting name
+              type: string
+            value:
+              description: a setting value
+              type: string
+          required:
+          - key
+          - value
+          type: object
+        personaSettings:
+          description: A map of persona attributes
+          example:
+            catchPhrase: Yipee ki yay!
+          maxItems: 15
+          minItems: 0
+          properties:
+            key:
+              description: a setting name
+              type: string
+            value:
+              description: a setting value
+              type: string
+          required:
+          - key
+          - value
+          type: object
+      required:
+      - isAdmin
+      - maxParentalRatings
+      - name
+      - userId
+      - userProfileId
+      type: object
+    baseObject:
+      properties:
+        id:
+          description: An externally assigned, mutable identifier of the object.
+          example: https://personas.tp.com/cpd/1214532/accounts/344
+          type: string
+        created:
+          allOf:
+          - $ref: '#/components/schemas/dateTime'
+          description: The date and time this object was created, expressed as a valid
+            date-time representation as defined by RFC 3339, section 5.6.
+          readOnly: true
+        modified:
+          allOf:
+          - $ref: '#/components/schemas/dateTime'
+          description: The date and time this object was updated, expressed as a valid
+            date-time representation as defined by RFC 3339, section 5.6.
+          readOnly: true
+      type: object
+    dateTime:
+      description: A valid date-time representation as defined by RFC 3339, section
+        5.6. Note that the regular expression cannot reject all invalid dates, but
+        only provide guidance. Unlike RFC 3339, we do define a practical (if impractically
+        precise) length limit on the number of fractional seconds. It's worth noting
+        that RFC 3339 is a profile of the ISO 8601 date-time standard. This means,
+        for instance, that seconds are mandatory, although fractional seconds are
+        not. Definition from [PayPal](https://github.com/paypal/api-standards/blob/master/v1/schema/json/draft-04/date_time.json).
+      format: paypal_date_time_v3
+      maxLength: 64
+      minLength: 20
+      pattern: ^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])[T,t]([0-1][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)([.][0-9]+)?([Zz]|[+-][0-9]{2}:[0-9]{2})$
+      type: string
+    error_error:
+      example: https://d2c.theplatform.com/object/my-object-id
+      properties:
+        code:
+          description: The HTTP status code.
+          type: string
+        name:
+          description: A short, standardized text string indicating the type of error.
+          type: string
+        details:
+          description: Details about the error, if available.
+          type: string
+        correlationId:
+          description: A correlationId associated with the request that caused the
+            error.
+          type: string
+  securitySchemes:
+    mpxAdminAuth:
+      description: Administrative credentials for mpx, the mpx account ID and administrative
+        security token in the Authorization:Basic header, separated by a colon and
+        base64-encoded. See the [Technical Resource Center](https://docs.theplatform.com/help/wsf-submitting-access-control-information-for-a-method-call)
+        for more details.
+      scheme: basic
+      type: http
+    mpxEndUserAuth:
+      description: Administrative credentials for mpx, the mpx account ID and administrative
+        security token in the Authorization:Basic header, separated by a colon and
+        base64-encoded. See the [Technical Resource Center](https://docs.theplatform.com/help/wsf-submitting-access-control-information-for-a-method-call)
+        for more details.
+      scheme: basic
+      type: http
